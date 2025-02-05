@@ -1,4 +1,5 @@
 import {useRef} from "react";
+import Task from "./Task.jsx";
 
 function formatDate(date) {
     return date.toLocaleDateString('en-US', {
@@ -8,21 +9,25 @@ function formatDate(date) {
     });
 }
 
-export default function ProjectDetails({onCreateTask, project, projectIndex, onCompleteTask}) {
+export default function ProjectDetails({onCreateTask, project, onCompleteTask}) {
 
     const task = useRef('');
 
     function submitHandler() {
-        onCreateTask(projectIndex, "New Task");
+        onCreateTask(project, task.current.value);
         task.current.value = '';
         task.current.focus();
     }
 
+    function handleComplete(task) {
+        onCompleteTask(project, task);
+    }
+
     return (
-        <main role="main" className="h-full flex-grow p-4 pr-12 overflow-auto">
+        <div className="h-full flex-grow p-4 pr-12 min-w-xl overflow-auto">
             <section className="pt-4">
                 <h1 className="text-2xl font-bold mb-2">{project.name}</h1>
-                <p className="text-stone-400 mb-4">{formatDate(project.createdOn)}</p>
+                <p className="text-stone-400 mb-4">{formatDate(project.dueDate)}</p>
                 <p className="mb-4">{project.description}</p>
             </section>
             <hr className="text-stone-400"/>
@@ -31,7 +36,7 @@ export default function ProjectDetails({onCreateTask, project, projectIndex, onC
                 <form onSubmit={submitHandler}
                       className="flex flex-row gap-4 items-center border-b border-gray-200 py-4">
                     <div className="flex-grow-1">
-                        <input ref={task} type="text" placeholder="Create a task"
+                        <input ref={task} type="text" placeholder="Create a task" required={true}
                                className="w-full p-2 border border-gray-200"/>
                     </div>
                     <button type="submit"
@@ -40,20 +45,21 @@ export default function ProjectDetails({onCreateTask, project, projectIndex, onC
                     </button>
                 </form>
                 <ul>
-                    {project.tasks.map((task, index) =>
-                        <li key={index} className="flex flex-row items-center border-b border-gray-200 p-4">
-                            <span className="flex-grow-1">{task.name}</span>
-                            {task.completed && <span className="text-green-500">Completed</span>}
-                            {!task.completed && <button
-                                onClick={() => onCompleteTask(projectIndex, index)}
-                                className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-xs text-white font-bold py-2 px-4 rounded">Complete
-                                Task
-                            </button>}
-
-                        </li>
-                    )}
+                    {project.tasks
+                        .slice()
+                        .sort((a, b) => {
+                            if (a.completed === b.completed) {
+                                return new Date(a.createdAt) - new Date(b.createdAt);
+                            }
+                            return a.completed - b.completed;
+                        }).map((task) =>
+                            <li key={task.id} className="flex flex-row items-center border-b border-gray-200 p-4">
+                                <Task name={task.name} onComplete={() => handleComplete(task)}
+                                      completed={task.completed}/>
+                            </li>
+                        )}
                 </ul>
             </section>
-        </main>
+        </div>
     );
 }

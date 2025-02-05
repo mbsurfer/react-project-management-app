@@ -4,8 +4,6 @@ import {useRef} from "react";
 export default function NewProjectModal({ref, onCreateProject}) {
 
     const form = useRef();
-    const projectName = useRef();
-    const projectDescription = useRef();
 
     function closeDialog() {
         ref.current.close();
@@ -17,8 +15,9 @@ export default function NewProjectModal({ref, onCreateProject}) {
 
     function handleSubmit() {
         onCreateProject({
-            name: projectName.current.value,
-            description: projectDescription.current.value
+            name: form.current.name.value,
+            description: form.current.description.value,
+            dueDate: new Date(form.current.dueDate.value)
         });
     }
 
@@ -27,15 +26,20 @@ export default function NewProjectModal({ref, onCreateProject}) {
                 className="dialog-slide-in backdrop:bg-black backdrop:opacity-90 rounded-md bg-stone-50 m-auto p-16 w-1/3">
             <h1 className="text-2xl mb-8">New Project</h1>
             <form ref={form} method="dialog" className="" onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label className="block mb-1">Project Name</label>
-                    <input ref={projectName} className="w-full p-2 border border-gray-200" type="text" name="name"
+                <div className="mb-2">
+                    <label className="block mb-1" htmlFor="name">Project Name</label>
+                    <input className="w-full p-2 border border-gray-200" type="text" name="name" id="name"
                            autoComplete="off" required={true}/>
                 </div>
-                <div className="mb-4">
-                    <label className="block mb-1">Description</label>
-                    <textarea ref={projectDescription} className="w-full p-2 border border-gray-200"
+                <div className="mb-2">
+                    <label className="block mb-1" htmlFor="description">Description</label>
+                    <textarea className="w-full p-2 border border-gray-200" id="description"
                               name="description"/>
+                </div>
+                <div className="mb-8">
+                    <label className="block mb-1" htmlFor="dueDate">Due Date</label>
+                    <input className="w-full p-2 border border-gray-200" type="date" name="dueDate" id="dueDate"
+                           autoComplete="off" required={true}/>
                 </div>
                 <button type="submit"
                         className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">Create

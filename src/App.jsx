@@ -1,81 +1,103 @@
 import ProjectMenu from "./components/ProjectMenu.jsx";
 import ProjectDetails from "./components/ProjectDetails.jsx";
-import {useState} from "react";
+import {useRef, useState} from "react";
+import NoProjectSelected from "./components/NoProjectSelected.jsx";
+import NewProjectModal from "./components/NewProjectModal.jsx";
 
-const initialProjects = [
-    {
-        name: "Learning React",
-        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
-        createdOn: new Date(2024, 11, 29),
-        tasks: [
-            {
-                name: "Task 1",
-                completed: false
-            }
-        ]
-    },
-    {
-        name: "Learning Vue",
-        description: "Learning Vue.js for frontend development.",
-        createdOn: new Date(2025, 1, 1),
-        tasks: [
-            {
-                name: "My first task!",
-                completed: false
-            }
-        ]
+function generateProjectId(projects) {
+    let id = Math.random()
+    while (projects.find(project => project.id === id)) {
+        id = Math.random()
     }
-]
+    return id;
+}
+
+function generateTaskId(tasks) {
+    let id = Math.random()
+    while (tasks.find(task => task.id === id)) {
+        id = Math.random()
+    }
+    return id;
+}
+
+function findResourceById(resource, id) {
+    const index = resource.findIndex(p => p.id === id);
+    return index >= 0 ? index : null;
+}
 
 function App() {
 
-    const [projects, setProjects] = useState(initialProjects);
-    const [selectedProjectIndex, setSelectedProjectIndex] = useState(0);
+    const [projects, setProjects] = useState([]);
+    const [selectedProjectId, setSelectedProjectId] = useState();
+
+    const dialog = useRef();
+
+    function showCreateProject() {
+        dialog.current.showModal();
+    }
 
     function createProject(project) {
+        const newProjectId = generateProjectId(projects);
         setProjects((oldProjects) => {
             const newProjects = structuredClone(oldProjects);
             newProjects.push({
-                createdOn: new Date(),
+                id: newProjectId,
                 tasks: [],
                 ...project
             });
             return newProjects;
         });
-        setSelectedProjectIndex(projects.length);
+
+        // select the new project
+        setSelectedProjectId(newProjectId);
     }
 
-    function selectProject(index) {
-        setSelectedProjectIndex(index);
+    function selectProject(id) {
+        setSelectedProjectId(id);
     }
 
-    function createTask(projectIndex, taskName) {
+
+    function createTask(project, taskName) {
+        const newTaskId = generateTaskId(project.tasks);
         setProjects((oldProjects) => {
             const newProjects = structuredClone(oldProjects);
+            const projectIndex = findResourceById(newProjects, project.id);
             newProjects[projectIndex].tasks.push({
+                id: newTaskId,
                 name: taskName,
-                completed: false
+                completed: false,
+                completedAt: null,
+                createdAt: new Date()
             });
             return newProjects;
         });
     }
 
-    function completeTask(projectIndex, taskIndex) {
+    function completeTask(project, task) {
         setProjects((oldProjects) => {
             const newProjects = structuredClone(oldProjects);
-            newProjects[projectIndex].tasks[taskIndex].completed = true;
+            const projectIndex = findResourceById(newProjects, project.id);
+            const newProject = newProjects[projectIndex];
+            const taskIndex = findResourceById(newProject.tasks, task.id);
+
+            newProject.tasks[taskIndex].completed = true;
+            newProject.tasks[taskIndex].completedAt = new Date();
+
             return newProjects;
         });
     }
 
     return (
         <>
-            <div className="h-full w-full flex flex-row flex-grow overflow-hidden">
-                <ProjectMenu projects={projects} onCreateProject={createProject} onSelectProject={selectProject}
-                             selectedProjectIndex={selectedProjectIndex}/>
-                <ProjectDetails onCreateTask={createTask} projectIndex={selectedProjectIndex}
-                                project={projects[selectedProjectIndex]} onCompleteTask={completeTask}/>
-            </div>
+            <main className="h-full w-full flex flex-row flex-grow overflow-hidden">
+                <ProjectMenu projects={projects} selectedProjectId={selectedProjectId}
+                             showCreateProject={showCreateProject} onSelectProject={selectProject}/>
+                {(selectedProjectId) && <ProjectDetails onCreateTask={createTask}
+                                                        project={projects.find(p => p.id === selectedProjectId)}
+                                                        onCompleteTask={completeTask}/>}
+                {(!selectedProjectId) && <NoProjectSelected showCreateProject={showCreateProject}/>}
+                <NewProjectModal ref={dialog} onCreateProject={createProject}/>
+            </main>
         </>
     );
 }
