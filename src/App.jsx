@@ -4,17 +4,9 @@ import {useRef, useState} from "react";
 import NoProjectSelected from "./components/NoProjectSelected.jsx";
 import NewProjectModal from "./components/NewProjectModal.jsx";
 
-function generateProjectId(projects) {
+function generateUniqueResourceId(resources) {
     let id = Math.random()
-    while (projects.find(project => project.id === id)) {
-        id = Math.random()
-    }
-    return id;
-}
-
-function generateTaskId(tasks) {
-    let id = Math.random()
-    while (tasks.find(task => task.id === id)) {
+    while (resources.find(resource => resource.id === id)) {
         id = Math.random()
     }
     return id;
@@ -37,7 +29,7 @@ function App() {
     }
 
     function createProject(project) {
-        const newProjectId = generateProjectId(projects);
+        const newProjectId = generateUniqueResourceId(projects);
         setProjects((oldProjects) => {
             const newProjects = structuredClone(oldProjects);
             newProjects.push({
@@ -52,13 +44,23 @@ function App() {
         setSelectedProjectId(newProjectId);
     }
 
+    function deleteProject(project) {
+        setProjects((oldProjects) => {
+            const newProjects = structuredClone(oldProjects);
+            const projectIndex = findResourceById(newProjects, project.id);
+            newProjects.splice(projectIndex, 1);
+            return newProjects;
+        });
+        setSelectedProjectId(null);
+    }
+
     function selectProject(id) {
         setSelectedProjectId(id);
     }
 
 
     function createTask(project, taskName) {
-        const newTaskId = generateTaskId(project.tasks);
+        const newTaskId = generateUniqueResourceId(project.tasks);
         setProjects((oldProjects) => {
             const newProjects = structuredClone(oldProjects);
             const projectIndex = findResourceById(newProjects, project.id);
@@ -94,7 +96,9 @@ function App() {
                              showCreateProject={showCreateProject} onSelectProject={selectProject}/>
                 {(selectedProjectId) && <ProjectDetails onCreateTask={createTask}
                                                         project={projects.find(p => p.id === selectedProjectId)}
-                                                        onCompleteTask={completeTask}/>}
+                                                        onCompleteTask={completeTask}
+                                                        onDeleteProject={deleteProject}
+                />}
                 {(!selectedProjectId) && <NoProjectSelected showCreateProject={showCreateProject}/>}
                 <NewProjectModal ref={dialog} onCreateProject={createProject}/>
             </main>

@@ -23,8 +23,8 @@ export default function NewProjectModal({ref, onCreateProject}) {
 
     return createPortal(
         <dialog ref={ref} onClose={resetForm}
-                className="dialog-slide-in backdrop:bg-black backdrop:opacity-90 rounded-md bg-stone-50 m-auto p-16 w-1/3">
-            <h1 className="text-2xl mb-8">New Project</h1>
+                className="dialog-slide-in backdrop:bg-black/90 rounded-md bg-stone-50 m-auto p-16 w-1/3">
+            <h2 className="text-2xl mb-8">New Project</h2>
             <form ref={form} method="dialog" className="" onSubmit={handleSubmit}>
                 <div className="mb-2">
                     <label className="block mb-1" htmlFor="name">Project Name</label>

@@ -3,7 +3,7 @@ export default function Task({completed, name, onComplete}) {
     const CompletedTask = ({name}) => {
         return <>
             <span className="flex-grow-1 line-through opacity-50">{name}</span>
-            <span className="text-green-500">Completed</span>
+            <span className="text-green-500">Task Completed</span>
         </>;
     }
 
