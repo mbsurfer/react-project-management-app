@@ -30,7 +30,7 @@ export default function NewProjectModal({ref, onCreateProject}) {
                 <div className="mb-4">
                     <label className="block mb-1">Project Name</label>
                     <input ref={projectName} className="w-full p-2 border border-gray-200" type="text" name="name"
-                           autoComplete="off"/>
+                           autoComplete="off" required={true}/>
                 </div>
                 <div className="mb-4">
                     <label className="block mb-1">Description</label>
