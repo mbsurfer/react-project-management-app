@@ -11,7 +11,7 @@ export default function ProjectMenu({projects, onCreateProject, onSelectProject,
 
     return (
         <>
-            <NewProjectModal ref={dialog}/>
+            <NewProjectModal ref={dialog} onCreateProject={onCreateProject}/>
             <div className="w-80 p-4 bg-gray-200">
                 <div className="sticky top-0 p-4 w-full">
                     <section className="flex justify-between items-center mb-6">

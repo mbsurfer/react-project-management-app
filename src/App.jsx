@@ -35,9 +35,14 @@ function App() {
     function createProject(project) {
         setProjects((oldProjects) => {
             const newProjects = structuredClone(oldProjects);
-            newProjects.push(project);
+            newProjects.push({
+                createdOn: new Date(),
+                tasks: [],
+                ...project
+            });
             return newProjects;
         });
+        setSelectedProjectIndex(projects.length);
     }
 
     function selectProject(index) {
@@ -51,7 +56,6 @@ function App() {
                 name: taskName,
                 completed: false
             });
-            console.log(newProjects);
             return newProjects;
         });
     }
