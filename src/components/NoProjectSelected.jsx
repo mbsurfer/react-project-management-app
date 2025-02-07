@@ -1,6 +1,7 @@
 import noProjectImage from '../assets/no-projects.png';
 
 export default function NoProjectSelected({showCreateProject}) {
+
     return (
         <div className="h-full flex-grow p-4 pr-12 min-w-xl overflow-auto">
             <section className="pt-32 text-center">

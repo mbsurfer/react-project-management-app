@@ -1,17 +1,22 @@
-export default function Task({completed, name, onComplete}) {
+import {use} from "react";
+import {ProjectsContext} from "../store/projects-context.jsx";
 
-    const CompletedTask = ({name}) => {
+export default function Task({task}) {
+
+    const {completeTask} = use(ProjectsContext);
+
+    const CompletedTask = ({task}) => {
         return <>
-            <span className="flex-grow-1 line-through opacity-50">{name}</span>
+            <span className="flex-grow-1 line-through opacity-50">{task.name}</span>
             <span className="text-green-500">Task Completed</span>
         </>;
     }
 
-    const IncompleteTask = ({name, onComplete}) => {
+    const IncompleteTask = ({task}) => {
         return <>
-            <span className="flex-grow-1">{name}</span>
+            <span className="flex-grow-1">{task.name}</span>
             <button
-                onClick={onComplete}
+                onClick={() => completeTask(task.id)}
                 className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-xs text-white font-bold py-2 px-4 rounded">Complete
                 Task
             </button>
@@ -21,8 +26,8 @@ export default function Task({completed, name, onComplete}) {
 
     return (
         <>
-            {completed && <CompletedTask name={name}/>}
-            {!completed && <IncompleteTask name={name} onComplete={onComplete}/>}
+            {task.completed && <CompletedTask task={task}/>}
+            {!task.completed && <IncompleteTask task={task}/>}
         </>
     );
 

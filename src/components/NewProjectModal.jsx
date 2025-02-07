@@ -1,7 +1,11 @@
 import {createPortal} from "react-dom";
-import {useRef} from "react";
+import {use, useRef} from "react";
 
-export default function NewProjectModal({ref, onCreateProject}) {
+import {ProjectsContext} from "../store/projects-context";
+
+export default function NewProjectModal({ref}) {
+
+    const {createProject} = use(ProjectsContext);
 
     const form = useRef();
 
@@ -14,7 +18,7 @@ export default function NewProjectModal({ref, onCreateProject}) {
     }
 
     function handleSubmit() {
-        onCreateProject({
+        createProject({
             name: form.current.name.value,
             description: form.current.description.value,
             dueDate: new Date(form.current.dueDate.value)

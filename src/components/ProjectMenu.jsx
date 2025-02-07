@@ -1,4 +1,9 @@
-export default function ProjectMenu({projects, onSelectProject, selectedProjectId, showCreateProject}) {
+import {use} from 'react';
+import {ProjectsContext} from '../store/projects-context.jsx';
+
+export default function ProjectMenu({showCreateProject}) {
+
+    const {projects, selectedProject, selectProject} = use(ProjectsContext);
 
     return (
         <>
@@ -17,11 +22,11 @@ export default function ProjectMenu({projects, onSelectProject, selectedProjectI
                     <ul className="flex flex-col overflow-hidden content-center justify-between">
                         {projects.map((project) => {
                                 let className = "w-full text-left cursor-pointer p-4 hover:bg-stone-700";
-                                if (selectedProjectId === project.id) {
+                                if (selectedProject === project.id) {
                                     className += " bg-stone-500";
                                 }
                                 return (<li key={project.id}>
-                                    <button onClick={() => onSelectProject(project.id)}
+                                    <button onClick={() => selectProject(project.id)}
                                             className={className}>{project.name}</button>
                                 </li>);
                             }
